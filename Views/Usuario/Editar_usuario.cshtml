@@ -1,0 +1,16 @@
+@model Usuario
+<h1>Editar o Usuario.</h1>
+<form action="Editar_usuario" method="post">
+    <input type="text" name="Nome" id="userNome" value="@Model.nome">
+    <input type="text" name="Login" id="userLogin" value="@Model.login">
+    <input type="text" name="Senha" id="userSenha" value="@Model.senha">
+
+    <select name="tipo" id="userTipo">
+        <option value="@Usuario.ADIMIN">Adiministrador</option>
+        <option value="@Usuario.PADRAO">Padrão</option>
+    </select>
+
+    <input type="hidden" asp-for="id">
+
+    <input type="submit" value="Concluir Edição">
+</form>
