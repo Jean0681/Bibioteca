@@ -1,6 +1,12 @@
-@model ICollection<Emprestimo>
+@model List<Emprestimo>
 @{
     ViewData["Title"] = "Listagem de Empréstimos";
+    String Classe = "";
+
+    int FiltroPorPag = Int32.Parse(ViewData["EmprestimosPorPagina"].ToString());
+    int PaginaAtual = Int32.Parse(ViewData["PaginaAtual"].ToString());
+    int NumEmprestimoPorPag = (Model.Count < FiltroPorPag ? Model.Count : FiltroPorPag);
+    int NumTotalDePag = (Model.Count / NumEmprestimoPorPag) + (Model.Count % NumEmprestimoPorPag == 0 ? 0 : 1);
 }
 
 <div class="row">
@@ -15,7 +21,27 @@
         <div class="form-group mb-2 mx-sm-3">
             <input type="text" placeholder="Filtro" name="Filtro" class="form-control" />
         </div>
+
+        <div>
+            <select name="itensPorPagina" id="itensPorPagina">
+                <option value="10">10 Empréstimos</option>
+                <option value="15">15 Empréstmos</option>
+                <option value="30">30 Empréstimos</option>
+                <option value="50">50 Empréstimos</option>
+                <option value="@Model.Count">Exibir Tudo</option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary mb-2">Pesquisar</button>
+
+        <div id="SeletorPagina">
+            <span>Página:</span>
+            @for (int i = 1; i < NumTotalDePag; i++)
+            {
+                <span><a href="/Emprestimo/Listagem?PaginaAtual=@i">@i, </a></span>
+            }
+        </div>
+
     </form>
     </div>
 </div>
@@ -35,7 +61,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(Emprestimo e in Model)
+                    @* @foreach(Emprestimo e in Model)
                     {
                     <tr>
                         <td>@e.Id</td>
@@ -46,6 +72,30 @@
                         <td>@e.Livro.Autor</td>
                         <td><a href="/Emprestimo/Edicao/@e.Id">Editar</a></td>
                     </tr>
+                    } *@
+
+                    @for (int i = (PaginaAtual - 1) * NumEmprestimoPorPag; i < (NumEmprestimoPorPag * PaginaAtual < Model.Count ? NumEmprestimoPorPag * PaginaAtual : Model.Count); i++)
+                    {
+                        if ((System.DateTime.Compare(System.DateTime.Now, Model[i].DataDevolucao)>0))
+                        {
+                            Classe = "text-danger"; // fica vermelho se passar da data e a pessoa não devolveu
+                            if (Model[i].Devolvido == true)
+                            {
+                                Classe = "text-primary"; // texto azul se for devolvido
+                            }
+                        }else{
+                            Classe = "";
+                        }
+
+                        <tr class="@Classe">
+                            <td>@Model[i].Id</td>
+                            <td>@Model[i].NomeUsuario</td>
+                            <td>@Model[i].DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                            <td>@Model[i].DataDevolucao.ToString("dd/MM/yyyy")</td>
+                            <td>@Model[i].Livro.Titulo</td>
+                            <td>@Model[i].Livro.Autor</td>
+                            <td><a href="/Emprestimo/Edicao/@Model[i].Id">Editar</a></td>
+                        </tr>
                     }
                 </tbody>
             </table>
