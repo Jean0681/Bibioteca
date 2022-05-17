@@ -25,6 +25,7 @@ namespace Biblioteca.Models
                 emprestimo.LivroId = e.LivroId;
                 emprestimo.DataEmprestimo = e.DataEmprestimo;
                 emprestimo.DataDevolucao = e.DataDevolucao;
+                emprestimo.Devolvido = e.Devolvido;
 
                 bc.SaveChanges();
             }
@@ -40,22 +41,24 @@ namespace Biblioteca.Models
                     switch (filtro.TipoFiltro)
                     {
                         case "Usuario":
-                            Query = bc.Emprestimos.Where(e => e.NomeUsuario.Contains(filtro.Filtro,System.StringComparison.OrdinalIgnoreCase)); // "System.StringComparison.OrdinalIgnoreCase" utilizado para não haver diferença na letra maiscula ou minuscula utilizada.
+                            Query = bc.Emprestimos.Include(e => e.Livro).Where(e => e.NomeUsuario.Contains(filtro.Filtro,System.StringComparison.OrdinalIgnoreCase)); // "System.StringComparison.OrdinalIgnoreCase" utilizado para não haver diferença na letra maiscula ou minuscula utilizada.
                         break;    
 
                         case "Livro":
-                            Query = bc.Emprestimos.Where(e => e.Livro.Titulo.Contains(filtro.Filtro,System.StringComparison.OrdinalIgnoreCase));
+                            Query = bc.Emprestimos.Include(e => e.Livro).Where(e => e.Livro.Titulo.Contains(filtro.Filtro,System.StringComparison.OrdinalIgnoreCase)); // Lembrar de testar sem o "Include" que era a forma que estava antes, para ver oque acontece.
                         break;
 
                         default:
-                            Query = bc.Emprestimos;
+                            // Query = bc.Emprestimos;
+                            Query = bc.Emprestimos.Include(e => e.Livro);
                         break;
                     }
                 }else{
                     Query = bc.Emprestimos;
                 }
 
-                return Query.Include(e => e.Livro).ToList().OrderByDescending(e => e.DataDevolucao).ToList();
+                return Query.OrderByDescending(e => e.DataDevolucao).ToList();
+                // return Query.Include(e => e.Livro).ToList().OrderByDescending(e => e.DataDevolucao).ToList();
             }
         }
 

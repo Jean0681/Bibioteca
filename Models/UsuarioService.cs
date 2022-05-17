@@ -14,7 +14,7 @@ namespace Biblioteca.Models
             }
         }
 
-        public List<Usuario> Listar_Usuarios()
+        public List<Usuario> Listar_Usuarios() // tentar entender a diferença desse coddigo de lista para o da parte de baixo.
         {
             using (BibliotecaContext context = new BibliotecaContext())
             {
