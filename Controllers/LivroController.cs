@@ -1,3 +1,4 @@
+using System;
 using Biblioteca.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ namespace Biblioteca.Controllers
             return RedirectToAction("Listagem");
         }
 
-        public IActionResult Listagem(string tipoFiltro, string filtro)
+        public IActionResult Listagem(string tipoFiltro, string filtro, string itens_por_pagina, int num_da_pagina, int pagina_atual)
         {
             Autenticacao.CheckLogin(this);
             FiltrosLivros objFiltro = null;
@@ -38,6 +39,10 @@ namespace Biblioteca.Controllers
                 objFiltro.Filtro = filtro;
                 objFiltro.TipoFiltro = tipoFiltro;
             }
+
+                ViewData["livrosPorPagina"]=(string.IsNullOrEmpty(itens_por_pagina) ? 10 : Int32.Parse(itens_por_pagina));
+                ViewData["PaginaAtual"]=(pagina_atual != 0 ? pagina_atual : 1);
+
             LivroService livroService = new LivroService();
             return View(livroService.ListarTodos(objFiltro));
         }

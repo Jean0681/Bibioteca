@@ -10,6 +10,8 @@ namespace Biblioteca.Models
             optionsBuilder.UseMySql("Server=localhost;DataBase=Biblioteca;Uid=root;");
         }
 
+
+        // Tabelas do banco de dados.
         public DbSet<Usuario> Usuarios {get; set;}
         public DbSet<Livro> Livros {get; set;}
         public DbSet<Emprestimo> Emprestimos {get; set;}
